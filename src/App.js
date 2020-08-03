@@ -11,11 +11,16 @@ import './App.css';
 function App() {
   const numRows = 60;
   const numCols = 100;
-  const timeInterval = 80;
+
+  const [timeInterval, setTimeInterval] = useState(100);
+  const timeIntervalRef = useRef();
+  timeIntervalRef.current = timeInterval;
+
   const [grid, setGrid] = useState(generateEmptyGrid());
   const [isRunning, setIsRunning] = useState(false);
   const isRunningRef = useRef();
   isRunningRef.current = isRunning;
+
   const [numGens, setNumGens] = useState(1);
   const [displayAbout, setDisplayAbout] = useState(false);
   const [displayRules, setDisplayRules] = useState(false);
@@ -157,7 +162,7 @@ function App() {
       });
     });
     setNumGens((prev) => prev + 1);
-    setTimeout(runGame, timeInterval);
+    setTimeout(runGame, timeIntervalRef.current);
   }, []);
 
   function generateRandomGrid() {
@@ -189,6 +194,14 @@ function App() {
 
   function handleAudio() {
     setAllowAudio(!allowAudio);
+  }
+
+  function toggleSpeed() {
+    if (timeInterval < 1000) {
+      setTimeInterval(1000);
+    } else {
+      setTimeInterval(100);
+    }
   }
 
   return (
@@ -264,6 +277,11 @@ function App() {
           <button onClick={handleAudio}>
             {allowAudio ? 'Turn Audio Off' : 'Allow Audio'}
           </button>
+
+          <button onClick={toggleSpeed}>
+            {timeInterval < 1000 ? 'Slow down' : 'Speed up'}
+          </button>
+
           <button onClick={handleAbout}>About</button>
           {displayAbout && (
             <p>
